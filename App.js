@@ -24,14 +24,14 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import ImagePicker from './src/ImagePicker'
+import ImagePickerMulti from './src/ImagePickerMulti'
 
 const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{flex: 1}}>
-        <ImagePicker />
+        <ImagePickerMulti />
       </SafeAreaView>
     </>
   );
