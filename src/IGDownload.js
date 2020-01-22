@@ -6,7 +6,7 @@ import {
 import CameraRoll from "@react-native-community/cameraroll"
 import CameraRollPicker from 'react-native-camera-roll-picker';
 
-const ImagePickerMulti = () => {
+const IGDownload = () => {
 
 	const [photos, setPhotos] = useState([])
 	const [selectedImages, setSelectedImages] = useState([])
@@ -15,6 +15,7 @@ const ImagePickerMulti = () => {
 	const _handleLinkInput = (text) => {
 		setLink(text)
 	}
+
 
 	const _getImageFromCameraRoll = () => {
 
@@ -32,8 +33,13 @@ const ImagePickerMulti = () => {
 	}
 
 	const _saveToCameraRoll = () => {
-		if(!link) {return alert('MUST ADD A LINK')}
-		CameraRoll.save(link)
+		if (!link) { return alert('MUST ADD A LINK') }
+
+		const sliced_url = link.split('/')
+		const userId = sliced_url[4]
+		// alert(sliced_url[4])
+
+		CameraRoll.save(`https://www.instagram.com/p/${userId}/media?size=l`)
 			.then(photo => {
 				_getImageFromCameraRoll()
 			}).catch(e => {
@@ -71,14 +77,21 @@ const ImagePickerMulti = () => {
 
 	const _renderItemFromCameraRoll = (item) => {
 
+		const uri = item.node.image.uri
 		return (
-			<TouchableWithoutFeedback onPress={() => _pickImage(item.node.image.uri)}>
+			<TouchableWithoutFeedback
+				onLongPress={async () => {
+					if (selectedImages.includes(uri)) { return alert('you have selected this image to delete it unselect.') }
+					await CameraRoll.deletePhotos([uri])
+					_getImageFromCameraRoll()
+				}}
+				onPress={() => _pickImage(uri)}>
 				<Image
 					style={{
 						width: 100,
 						height: 100,
 					}}
-					source={{ uri: item.node.image.uri }}
+					source={{ uri: uri }}
 				/>
 			</TouchableWithoutFeedback>
 		)
@@ -88,25 +101,28 @@ const ImagePickerMulti = () => {
 	return (
 		<View style={{ flex: 1 }}>
 
-			<TextInput 
+			<TextInput
 				value={link}
 				onChangeText={(text) => _handleLinkInput(text)}
 				style={{
-					height: 50, 
-					padding: 15, 
-					backgroundColor: '#eee', 
+					height: 50,
+					padding: 15,
+					backgroundColor: '#eee',
 					margin: 10,
 					borderRadius: 20,
-					}}
-					placeholder={'PASTE IMAGE LINK HERE ...'}
+				}}
+				placeholder={'PASTE INSTGRAM IMAGE LINK HERE ...'}
 			/>
 
+			<Text style={{fontSize: 10}}>Long Press to delete camera image, touch to unselect image.</Text>
+			<View style={{flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#eee', marginVertical: 10}}>
 			<Button title={'save image'.toUpperCase()} onPress={() => _saveToCameraRoll()} />
 			<Button title={'get images'.toUpperCase()} onPress={() => _getImageFromCameraRoll()} />
 
+			</View>
 			<View style={{ flex: 1 }}>
 
-				{<Text>{selectedImages.length}</Text>}
+				<Text>SELECTED: {selectedImages.length}</Text>
 
 				{
 					<FlatList
@@ -133,4 +149,4 @@ const ImagePickerMulti = () => {
 	)
 }
 
-export default ImagePickerMulti
+export default IGDownload

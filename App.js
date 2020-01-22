@@ -25,13 +25,14 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import ImagePickerMulti from './src/ImagePickerMulti'
+import IGDownload from './src/IGDownload';
 
 const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{flex: 1}}>
-        <ImagePickerMulti />
+        <IGDownload />
       </SafeAreaView>
     </>
   );
