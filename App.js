@@ -26,13 +26,15 @@ import {
 
 import ImagePickerMulti from './src/ImagePickerMulti'
 import IGDownload from './src/IGDownload';
+import ImagePicker from './src/ImagePicker'
+import DownloadImages from './src/DownloadImages';
 
 const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{flex: 1}}>
-        <IGDownload />
+        <DownloadImages />
       </SafeAreaView>
     </>
   );

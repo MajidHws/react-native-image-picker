@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, Button, ScrollView, Image } from 'react-native'
+import { View, Text, Button, ScrollView, Image, TextInput} from 'react-native'
 import CameraRoll from "@react-native-community/cameraroll"
 import CameraRollPicker from 'react-native-camera-roll-picker';
 
@@ -7,6 +7,7 @@ const ImagePicker = () => {
 
 	const [photos, setPhotos] = useState([])
 	const [selectedImage, setSelectedImage] = useState(null)
+	const [link, setLink] = useState(null)
 
 	const _getImageFromCameraRoll = () => {
 
@@ -24,7 +25,9 @@ const ImagePicker = () => {
 	}
 
 	const _saveToCameraRoll = () => {
-		CameraRoll.save('https://picsum.photos/200/300')
+		// if(link === '') {return alert('LINK PLS')}
+
+		CameraRoll.save(link)
 			.then(photo => {
 				_getImageFromCameraRoll()
 			}).catch(e => {
@@ -37,9 +40,25 @@ const ImagePicker = () => {
 
 	}
 
+	const _handleLinkInput = (text) => {
+		setLink(text)
+	}
+
 	return (
 		<View style={{ flex: 1 }}>
 
+		{/* <TextInput
+				value={link}
+				onChangeText={(text) => _handleLinkInput(text)}
+				style={{
+					height: 50,
+					padding: 15,
+					backgroundColor: '#eee',
+					margin: 10,
+					borderRadius: 20,
+				}}
+				placeholder={'PASTE INSTGRAM IMAGE LINK HERE ...'}
+			/> */}
 			<Button title={'save image'.toUpperCase()} onPress={() => _saveToCameraRoll()} />
 			<Button title={'get images'.toUpperCase()} onPress={() => _getImageFromCameraRoll()} />
 
