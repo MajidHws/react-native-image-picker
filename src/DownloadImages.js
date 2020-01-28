@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import {
 	View, Text, Button, ScrollView, TextInput,
-	Image, TouchableWithoutFeedback, FlatList
+	Image, TouchableWithoutFeedback, FlatList,
+	Dimensions
 } from 'react-native'
 import CameraRoll from "@react-native-community/cameraroll"
 import CameraRollPicker from 'react-native-camera-roll-picker';
@@ -10,10 +11,11 @@ const DownloadImages = () => {
 
 	useEffect(() => {
 		_getImageFromCameraRoll()
-	},[])
+	}, [])
 	const [photos, setPhotos] = useState([])
 	const [selectedImages, setSelectedImages] = useState([])
 	const [link, setLink] = useState(null)
+	const imagesPerRow = 2
 
 	const _handleLinkInput = (text) => {
 		setLink(text)
@@ -35,7 +37,7 @@ const DownloadImages = () => {
 	}
 
 	const _saveToCameraRoll = () => {
-		if(!link) {return alert('MUST ADD A LINK')}
+		if (!link) { return alert('MUST ADD A LINK') }
 		CameraRoll.save(link)
 			.then(photo => {
 				_getImageFromCameraRoll()
@@ -53,11 +55,14 @@ const DownloadImages = () => {
 	}
 
 	const _renderItem = (uri) => {
+
+		const { width, height } = Dimensions.get('screen')
+		const imgWidth = width / imagesPerRow
 		return (
 			<TouchableWithoutFeedback onPress={() => _deleteSelectImage(uri)}>
 				<Image
 					style={{
-						width: 100,
+						width: imgWidth,
 						height: 100,
 					}}
 					resizeMode="cover"
@@ -73,13 +78,14 @@ const DownloadImages = () => {
 	}
 
 	const _renderItemFromCameraRoll = (item) => {
-
+		const { width, height } = Dimensions.get('screen')
+		const imgWidth = width / imagesPerRow
 		return (
 			<TouchableWithoutFeedback onPress={() => _pickImage(item.node.image.uri)}>
 				<Image
 					style={{
-						width: 100,
-						height: 100,
+						width: imgWidth,
+						height: 300,
 					}}
 					source={{ uri: item.node.image.uri }}
 				/>
@@ -91,29 +97,42 @@ const DownloadImages = () => {
 	return (
 		<View style={{ flex: 1 }}>
 
-			<TextInput 
-				value={link}
-				onChangeText={(text) => _handleLinkInput(text)}
-				style={{
-					height: 50, 
-					padding: 15, 
-					backgroundColor: '#eee', 
-					margin: 10,
-					borderRadius: 20,
+			<View style={{
+				backgroundColor: '#eee'
+
+			}}>
+
+				<TextInput
+					value={link}
+					onChangeText={(text) => _handleLinkInput(text)}
+					style={{
+						height: 50,
+						padding: 15,
+						backgroundColor: '#fff',
+						margin: 10,
+						borderRadius: 20,
 					}}
 					placeholder={'PASTE IMAGE LINK HERE ...'}
-			/>
+				/>
 
-			<Button title={'save image'.toUpperCase()} onPress={() => _saveToCameraRoll()} />
-			<Button title={'get images'.toUpperCase()} onPress={() => _getImageFromCameraRoll()} />
+				<View style={{
+					flexDirection: 'row',
+					justifyContent: 'space-around',
+
+				}}>
+					<Button title={'save image'.toUpperCase()} onPress={() => _saveToCameraRoll()} />
+					<Button title={'get images'.toUpperCase()} onPress={() => _getImageFromCameraRoll()} />
+				</View>
+				{<Text>{`SELECTED IMAGES: ${selectedImages.length}`}</Text>}
+			</View>
 
 			<View style={{ flex: 1 }}>
 
-				{<Text>{selectedImages.length}</Text>}
+
 
 				{
 					<FlatList
-						numColumns={4}
+						numColumns={imagesPerRow}
 						keyExtractor={(item, i) => String(i)}
 						data={selectedImages}
 						renderItem={({ item }) => _renderItem(item)}
@@ -122,7 +141,8 @@ const DownloadImages = () => {
 
 				{
 					<FlatList
-						numColumns={4}
+
+						numColumns={imagesPerRow}
 						keyExtractor={(item, i) => String(i)}
 						data={photos}
 						renderItem={({ item }) => _renderItemFromCameraRoll(item)}
